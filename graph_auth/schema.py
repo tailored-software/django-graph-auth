@@ -12,7 +12,7 @@ from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphql_jwt.decorators import (login_required, superuser_required,
                                     token_auth)
-
+from graphene_federation import key
 
 from .constants import Messages, TokenAction
 from .exceptions import (EmailAlreadyInUse, TokenScopeError,
@@ -27,13 +27,16 @@ from .utils import get_token_payload, revoke_user_refresh_token
 
 UserModel = get_user_model()
 
-
+@key("id")
 class UserType(DjangoObjectType):
     class Meta:
         model = UserModel
         fields = "__all__"
         filter_fields = ["email", "username", "is_active", "is_staff", "is_superuser"]
         interfaces = (relay.Node,)
+
+    def _resolve_reference(self, info):
+        return UserModel.objects.get(id=self.id)
 
 
 class UserStatusType(DjangoObjectType):
