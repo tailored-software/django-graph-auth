@@ -28,7 +28,7 @@ from .utils import get_token_payload, revoke_user_refresh_token
 UserModel = get_user_model()
 
 @key("id")
-class UserType(DjangoObjectType):
+class AuthUserType(DjangoObjectType):
     class Meta:
         model = UserModel
         fields = "__all__"
@@ -48,8 +48,8 @@ class UserStatusType(DjangoObjectType):
 
 
 class AuthQuery(graphene.ObjectType):
-    me = graphene.Field(UserType)
-    user = graphene.Field(UserType, id=graphene.ID(required=True))
+    me = graphene.Field(AuthUserType)
+    user = graphene.Field(AuthUserType, id=graphene.ID(required=True))
     userstatus = DjangoFilterConnectionField(UserStatusType)
 
     @login_required
@@ -68,7 +68,7 @@ class AuthQuery(graphene.ObjectType):
 
 class Register(BaseRegister):
 
-    user = graphene.Field(UserType, description="A newly created user.")
+    user = graphene.Field(AuthUserType, description="A newly created user.")
 
     class Meta:
         description = "Register a new user."
