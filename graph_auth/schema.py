@@ -33,7 +33,7 @@ class AuthUserType(DjangoObjectType):
         model = UserModel
         fields = "__all__"
         filter_fields = ["email", "username", "is_active", "is_staff", "is_superuser"]
-        interfaces = (relay.Node,)
+        # interfaces = (relay.Node,)
 
     def _resolve_reference(self, info):
         return UserModel.objects.get(id=self.id)
